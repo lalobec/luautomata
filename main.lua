@@ -1,4 +1,4 @@
-require ("button")
+local button = require("button")
 local cell_size = 20
 local cursor_atXcell
 local cursor_atYcell
@@ -29,6 +29,7 @@ function love.load()
 end
 
 function love.draw()
+  button:draw()
   for y = 1, grid_y do
     local cell_ypos = cell_size * (y-1)
     for x = 1, grid_x do
@@ -50,16 +51,14 @@ function love.draw()
     love.graphics.print('Mouse x position: '..cursor_atXcell)
     love.graphics.print('Mouse y position: '..cursor_atYcell, 0, 20)
   end
-
   -- Highlight the cell at cursor position
   -- love.graphics.setColor(love.math.colorFromBytes(61, 141, 122))
   -- love.graphics.rectangle("fill", (cursor_atXcell-1)*cell_size, (cursor_atYcell-1)*cell_size, cell_size-1, cell_size-1)
   -- Now implemented with an if statement
-  button("Clear The Grid", 430,300)
-  button("Exit The Grid", 430,340)
 end
 
 function love.update()
+  button:update()
   cursor_atXcell = math.floor(love.mouse.getX() / cell_size) + 1
   cursor_atYcell = math.floor(love.mouse.getY() / cell_size) + 1
   if love.mouse.isDown(1) and cursor_atXcell <= grid_x and cursor_atYcell <= grid_y then
