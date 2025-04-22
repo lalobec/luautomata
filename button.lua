@@ -48,7 +48,9 @@ end
 function button:pressed()
   if self.isHovered then
     print("button clicked")
+    return true
   end
+  return false
 end
 
 return button

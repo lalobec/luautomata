@@ -66,3 +66,16 @@ function love.update()
   end
 end
 
+function love.mousepressed(x, y, btn)
+  if btn == 1 then
+    if button:pressed() then
+      for j = 0, grid_y do
+      grid[j] = {}
+        for i = 0, grid_x do
+          grid[j][i] = false
+        end
+      end
+    end
+  end
+end
+
