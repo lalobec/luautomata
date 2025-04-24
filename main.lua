@@ -1,5 +1,5 @@
 local button = require("button")
-local cell_size = 20
+local cell_size = 10
 local cursor_atXcell
 local cursor_atYcell
 local grid_y
@@ -10,10 +10,13 @@ local WIN_HEIGHT = 600
 
 function love.load()
   love.window.setMode(WIN_WIDTH, WIN_HEIGHT)
+  button.text = "Clear The Grid"
+  button.y = WIN_HEIGHT - button.height
+  button.x = 10
 
   love.graphics.setBackgroundColor(1, 1, 1)
-  grid_y = 20
-  grid_x = 20
+  grid_y = 45
+  grid_x = 50
 
   -- creating the alive_grid:
   grid = {}
@@ -51,10 +54,6 @@ function love.draw()
     love.graphics.print('Mouse x position: '..cursor_atXcell)
     love.graphics.print('Mouse y position: '..cursor_atYcell, 0, 20)
   end
-  -- Highlight the cell at cursor position
-  -- love.graphics.setColor(love.math.colorFromBytes(61, 141, 122))
-  -- love.graphics.rectangle("fill", (cursor_atXcell-1)*cell_size, (cursor_atYcell-1)*cell_size, cell_size-1, cell_size-1)
-  -- Now implemented with an if statement
 end
 
 function love.update()
@@ -76,6 +75,22 @@ function love.mousepressed(x, y, btn)
         end
       end
     end
+  end
+  if btn == 2 then
+    local neighbors = 0
+    print("Counting the neighbors at the clicked position...")
+    for dy = -1, 1 do
+      for dx = -1, 1 do
+        --if dy ~= 0 and dx ~= 0 and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
+        -- We need a nor gate for the first check: when dx=dy=0, that's the cell in question, cannot be a neighbor
+        -- Then we check if a cell exists at grid[+dy], if it does, we can search the cell with the third statement
+        if not (dy == 0 and dx == 0) and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
+          print("Neighbor found here")
+          neighbors = neighbors + 1
+        end
+      end
+    end
+    print("Total neighbors found: "..neighbors)
   end
 end
 
