@@ -5,6 +5,9 @@ local cursor_atYcell
 local grid_y
 local grid_x
 
+local grid = {}
+local neighbors = 0
+
 local WIN_WIDTH = 800
 local WIN_HEIGHT = 600
 
@@ -19,7 +22,6 @@ function love.load()
   grid_x = 50
 
   -- creating the alive_grid:
-  grid = {}
   for j = 0, grid_y do
     grid[j] = {}
     for i = 0, grid_x do
@@ -77,20 +79,63 @@ function love.mousepressed(x, y, btn)
     end
   end
   if btn == 2 then
-    local neighbors = 0
-    print("Counting the neighbors at the clicked position...")
-    for dy = -1, 1 do
-      for dx = -1, 1 do
-        --if dy ~= 0 and dx ~= 0 and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
-        -- We need a nor gate for the first check: when dx=dy=0, that's the cell in question, cannot be a neighbor
-        -- Then we check if a cell exists at grid[+dy], if it does, we can search the cell with the third statement
-        if not (dy == 0 and dx == 0) and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
-          print("Neighbor found here")
-          neighbors = neighbors + 1
+    neighbors = count_neighbors_cursor()
+    print("Total neighbors found: "..neighbors)
+  end
+end
+
+function love.keypressed(key)
+  if key == "escape" then
+    print("Coming out of the grid")
+    love.event.quit()
+  elseif key == "space" then
+    print("space pressed")
+    local nextGrid = {}
+    for y = 1, grid_y do
+      nextGrid[y] = {}
+      for x = 1, grid_x do
+        neighbors = count_neighbors(y, x)
+        if grid[y][x] then
+          if neighbors < 2 or neighbors > 3 then
+            nextGrid[y][x] = false
+          else
+            nextGrid[y][x] = true
+          end
+        elseif not grid[y][x] and neighbors == 3 then
+          nextGrid[y][x] = true
         end
       end
     end
-    print("Total neighbors found: "..neighbors)
+    grid = nextGrid
   end
+end
+
+function count_neighbors_cursor()
+  neighbors = 0
+  print("Counting the neighbors at the clicked position...")
+  for dy = -1, 1 do
+    for dx = -1, 1 do
+        --if dy ~= 0 and dx ~= 0 and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
+        -- We need a nor gate for the first check: when dx=dy=0, that's the cell in question, cannot be a neighbor
+        -- Then we check if a cell exists at grid[+dy], if it does, we can search the cell with the third statement
+      if not (dy == 0 and dx == 0) and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
+          print("Neighbor found here")
+          neighbors = neighbors + 1
+      end
+    end
+  end
+  return neighbors
+end
+
+function count_neighbors(y, x)
+  neighbors = 0
+  for dy = -1, 1 do
+    for dx = -1, 1 do
+      if not (dy == 0 and dx == 0) and grid[y+dy] and grid[y+dy][x+dx] then
+          neighbors = neighbors + 1
+      end
+    end
+  end
+  return neighbors
 end
 
