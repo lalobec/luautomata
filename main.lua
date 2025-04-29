@@ -1,10 +1,9 @@
-local button = require("button")
+local gen_button = require("generic_button")
 local cell_size = 5
 local cursor_atXcell
 local cursor_atYcell
 local grid_y
 local grid_x
-local count_neighbors = 0
 
 local grid = {}
 local neighbors = 0
@@ -12,12 +11,12 @@ local neighbors = 0
 local WIN_WIDTH = 800
 local WIN_HEIGHT = 600
 
+local clear_button = gen_button.new(20, WIN_HEIGHT-22, 110, 20, "Clear The Grid")
+local b2 = gen_button.new(140, WIN_HEIGHT - 22, 100, 20, "Test button")
+
 function love.load()
   love.window.setTitle("Conway's Game of Life")
   love.window.setMode(WIN_WIDTH, WIN_HEIGHT)
-  button.text = "Clear The Grid"
-  button.y = WIN_HEIGHT - button.height
-  button.x = 10
 
   love.keyboard.setKeyRepeat(true)
 
@@ -36,7 +35,7 @@ function love.load()
 end
 
 function love.draw()
-  button:draw()
+  clear_button:draw()
   for y = 1, grid_y do
     local cell_ypos = cell_size * (y-1)
     for x = 1, grid_x do
@@ -51,10 +50,12 @@ function love.draw()
       love.graphics.rectangle("fill", cell_xpos, cell_ypos, cell_size-1, cell_size-1)
     end
   end
+  b2:draw()
 end
 
 function love.update()
-  button:update()
+  clear_button:hover()
+  b2:hover()
   cursor_atXcell = math.floor(love.mouse.getX() / cell_size) + 1
   cursor_atYcell = math.floor(love.mouse.getY() / cell_size) + 1
   if love.mouse.isDown(1) and cursor_atXcell <= grid_x and cursor_atYcell <= grid_y then
@@ -64,7 +65,7 @@ end
 
 function love.mousepressed(x, y, btn)
   if btn == 1 then
-    if button:pressed() then
+    if b2:pressed() or clear_button:pressed() then
       for j = 0, grid_y do
       grid[j] = {}
         for i = 0, grid_x do
