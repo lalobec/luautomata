@@ -1,9 +1,10 @@
 local button = require("button")
-local cell_size = 10
+local cell_size = 5
 local cursor_atXcell
 local cursor_atYcell
 local grid_y
 local grid_x
+local count_neighbors = 0
 
 local grid = {}
 local neighbors = 0
@@ -12,14 +13,17 @@ local WIN_WIDTH = 800
 local WIN_HEIGHT = 600
 
 function love.load()
+  love.window.setTitle("Conway's Game of Life")
   love.window.setMode(WIN_WIDTH, WIN_HEIGHT)
   button.text = "Clear The Grid"
   button.y = WIN_HEIGHT - button.height
   button.x = 10
 
+  love.keyboard.setKeyRepeat(true)
+
   love.graphics.setBackgroundColor(1, 1, 1)
-  grid_y = 45
-  grid_x = 50
+  grid_y = WIN_HEIGHT / cell_size - 5
+  grid_x = WIN_WIDTH / cell_size
 
   -- creating the alive_grid:
   for j = 0, grid_y do
@@ -28,9 +32,7 @@ function love.load()
       grid[j][i] = false
     end
   end
-  grid[3][3] = true
-  grid[3][4] = true
-  grid[4][3] = true
+  --grid[3][3] = true
 end
 
 function love.draw()
@@ -48,13 +50,6 @@ function love.draw()
       end
       love.graphics.rectangle("fill", cell_xpos, cell_ypos, cell_size-1, cell_size-1)
     end
-  end
-
-  -- Print cursor position
-  if cursor_atXcell <= grid_x and cursor_atYcell <= grid_y then
-    love.graphics.setColor(0,0,0)
-    love.graphics.print('Mouse x position: '..cursor_atXcell)
-    love.graphics.print('Mouse y position: '..cursor_atYcell, 0, 20)
   end
 end
 
@@ -77,10 +72,6 @@ function love.mousepressed(x, y, btn)
         end
       end
     end
-  end
-  if btn == 2 then
-    neighbors = count_neighbors_cursor()
-    print("Total neighbors found: "..neighbors)
   end
 end
 
@@ -108,23 +99,6 @@ function love.keypressed(key)
     end
     grid = nextGrid
   end
-end
-
-function count_neighbors_cursor()
-  neighbors = 0
-  print("Counting the neighbors at the clicked position...")
-  for dy = -1, 1 do
-    for dx = -1, 1 do
-        --if dy ~= 0 and dx ~= 0 and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
-        -- We need a nor gate for the first check: when dx=dy=0, that's the cell in question, cannot be a neighbor
-        -- Then we check if a cell exists at grid[+dy], if it does, we can search the cell with the third statement
-      if not (dy == 0 and dx == 0) and grid[cursor_atYcell+dy] and grid[cursor_atYcell+dy][cursor_atXcell+dx] then
-          print("Neighbor found here")
-          neighbors = neighbors + 1
-      end
-    end
-  end
-  return neighbors
 end
 
 function count_neighbors(y, x)
