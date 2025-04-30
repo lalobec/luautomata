@@ -17,20 +17,18 @@ end
 function Menu:update()
   self.buttons[1]:hover()
   self.buttons[2]:hover()
-  if self.buttons[1].isHovered and love.mouse.isDown(1) then
-    self:start()
-  end
-  if self.buttons[2].isHovered and love.mouse.isDown(1) then
-    self:exit()
-  end
 end
 
 function Menu:start()
-  print("Starting game")
+  if self.buttons[1].isHovered then
+    return true
+  end
 end
 
 function Menu:exit()
-  love.event.quit()
+  if self.buttons[2].isHovered then
+    return true
+  end
 end
 
 return Menu
