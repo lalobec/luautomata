@@ -1,6 +1,7 @@
 local params = require("parameters")
 local gen_button = require("generic_button")
 local Grid = require("grid")
+local menu = require("menu")
 local cursor_atXcell
 local cursor_atYcell
 
