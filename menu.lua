@@ -1,12 +1,23 @@
-local gen_button = require("generic_button")
-local params = require("parameters")
-local menu = {}
+local Button = require("generic_button")
 
-local conways_button = gen_button.new(0, 0, 200, 30, "Conway's Game of Life")
+local Menu = {
+  buttons = {}
+}
 
-function menu:draw()
-  conways_button:draw()
+function Menu:load()
+  love.graphics.setBackgroundColor(1, 1, 1)
+  table.insert(self.buttons, Button.new(0, 0, 200, 20, "Start Game of Life"))
+  table.insert(self.buttons, Button.new(0, 30, 200, 20, "Exit", function() love.event.quit() end))
 end
 
+function Menu:draw()
+  self.buttons[1]:draw()
+  self.buttons[2]:draw()
+end
 
-return menu
+function Menu:update()
+  self.buttons[1]:update()
+  self.buttons[2]:update()
+end
+
+return Menu

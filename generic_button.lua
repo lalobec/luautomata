@@ -1,53 +1,60 @@
-local Button = {}           -- Creates a metatable
-Button.__index = Button     -- Define the index metamethod 
-function Button.new(x, y, width, height, text, onClicFunction)
-  local self = setmetatable({}, Button)
-  self.x = x
-  self.y = y
-  self.width = width
-  self.height = height
-  self.text = text
-  self.onClic = onClicFunction
-  self.isHovered = false
-  return self
+local Button = {}
+
+function Button.new(x, y, width, height, text, onClick)
+  local self = {
+    x = x,
+    y = y,
+    width = width,
+    height = height,
+
+    text = text or "",
+    font = love.graphics.getFont(),
+    color = {0.4, 0.4, 0.8},     -- blue
+    hoverColor = {0.6, 0.6, 1}, -- light blue
+    textColor = {1, 1, 1},      -- white
+    textOffset = {x=0, y=0},     -- text position
+
+    onClick = onClick or function() end,
+    isHovered = false,
+    isPressed = false
+  }
+  return setmetatable(self, {__index = Button})
 end
 
 function Button:draw()
-  if self.isHovered then
-    love.graphics.setColor(0.6, 0.6, 1)
-  else
-    love.graphics.setColor(0.4, 0.4, 0.8)
-  end
-  -- print("Drawing the button at ", self.x, self.y)
-  love.graphics.rectangle("fill", self.x, self.y, self.width,
-    self.height, 4, 4)
-  love.graphics.setColor(1, 1, 1)
-  love.graphics.setNewFont("fonts/BrownieStencil.ttf", 14)
-  local font = love.graphics.getFont()
-  font:setFilter("nearest", "nearest")
-  local textWidth = font:getWidth(self.text)
-  local textHeight = font:getHeight()
-  love.graphics.print(self.text,
-    self.x + (self.width - textWidth) / 2,
-    self.y + (self.height - textHeight) / 2)
+  -- Draw button
+  -- Remember 'and' returns the second operator if the first is truthy 
+  local color = self.isPressed and {0.3, 0.3, 0.7} or
+                self.isHovered and self.hoverColor or
+                self.color
+  love.graphics.setColor(color)
+  love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+
+  -- Add text
+  love.graphics.setColor(self.textColor)
+  local textWidth = self.font:getWidth(self.text)
+  local textHeight = self.font:getHeight()
+  love.graphics.print(
+    self.text,
+    self.x + (self.width - textWidth)/2 + self.textOffset.x,
+    self.y + (self.height - textHeight)/2 + self.textOffset.y
+  )
 end
 
-function Button:hover()
-  local mouseX, mouseY = love.mouse.getPosition()
-  if mouseX >= self.x and mouseX <= self.x + self.width and
-  mouseY >= self.y and mouseY <= self.y + self.height then
-    self.isHovered = true
-  else
-    self.isHovered = false
-  end
-end
+function Button:update()
+  local mx, my = love.mouse.getPosition()
+  self.isHovered = mx >= self.x and mx <= self.x + self.width and
+                   my >= self.y and my <= self.y + self.height
 
-function Button:pressed()
-  if self.isHovered then
-    print("genbutton clicked")
-    return true
+  if self.isHovered and love.mouse.isDown(1) then
+    self.isPressed = true
+  else
+    if self.isHovered and self.isPressed then
+      self.onClick()
+    end
+    self.isPressed = false
   end
-  return false
+
 end
 
 return Button

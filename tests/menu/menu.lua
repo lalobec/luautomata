@@ -5,8 +5,8 @@ local Menu = {
 }
 
 function Menu:load()
-  table.insert(self.buttons, Button.new(0, 0, 200, 20, "Start Game of Life", function() self:start() end, false))
-  table.insert(self.buttons, Button.new(0, 30, 200, 20, "Exit", function() self:exit() end, false))
+  table.insert(self.buttons, Button.new(0, 0, 200, 20, "Start Game of Life", function() self:start() end))
+  table.insert(self.buttons, Button.new(0, 30, 200, 20, "Exit", function() self:exit() end))
 end
 
 function Menu:draw()

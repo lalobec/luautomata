@@ -23,7 +23,8 @@ end
 
 function Button:draw()
   -- Draw button
-  local color = self.isPressed and {0.3, 0.3, 0.7} or -- and returns the second operator if the first is truthy 
+  -- Remember 'and' returns the second operator if the first is truthy 
+  local color = self.isPressed and {0.3, 0.3, 0.7} or
                 self.isHovered and self.hoverColor or
                 self.color
   love.graphics.setColor(color)

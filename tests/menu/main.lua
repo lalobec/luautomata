@@ -4,12 +4,12 @@ local GameState = {
 }
 local currentState = GameState.MENU
 
-local Menu = require("menu")
-local menu = Menu
+local menu = require("menu")
+local game = require("game")
 
 function love.load()
-  love.graphics.setBackgroundColor(1, 1, 1)
   menu:load()
+  game:load()
 end
 
 function love.update()
@@ -19,10 +19,10 @@ function love.update()
 end
 
 function love.draw()
-  love.graphics.clear()
   if currentState == GameState.MENU then
     menu:draw()
   else
+    love.graphics.setBackgroundColor(1, 1, 1)
     love.graphics.print("test")
   end
 end
