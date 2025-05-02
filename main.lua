@@ -1,5 +1,5 @@
 local params = require("parameters")
-local gen_button = require("generic_button")
+local Button = require("button")
 local Grid = require("grid")
 local cursor_atXcell
 local cursor_atYcell
@@ -12,12 +12,11 @@ local currentState = GameState.MENU
 
 local menu = require("menu")
 
-local grid = Grid.create_grid()
-
+local grid
 -- Buttons
 local clearGrid
-local clearBtn = gen_button.new(20, params.win_height-22, 110, 20, "Clear The Grid", function() clearGrid() end)
-local backmenuBtn = gen_button.new(140, params.win_height-22, 100, 20, "Back to Menu", function() currentState = GameState.MENU end)
+local clearBtn = Button.new(20, params.win_height-22, 110, 20, "Clear The Grid", function() Grid.clear(grid) end)
+local backmenuBtn = Button.new(140, params.win_height-22, 100, 20, "Back to Menu", function() currentState = GameState.MENU end)
 
 -- --------------
 -- Love.load
@@ -26,11 +25,17 @@ function love.load()
   love.window.setTitle("Conway's Game of Life")
   love.window.setMode(params.win_width, params.win_height)
   love.keyboard.setKeyRepeat(true)
+
+  grid = Grid.create_grid()
+
   if currentState == GameState.MENU then
     menu:load()
     menu.buttons[1].onClick = function()
       currentState = GameState.PLAYING
     end
+    local centerBtn = params.win_width/2 - menu.buttons[1].width/2
+    menu.buttons[1].x = centerBtn
+    menu.buttons[2].x = centerBtn
   end
 end
 
@@ -59,20 +64,12 @@ function love.update()
     backmenuBtn:update()
     cursor_atXcell = math.floor(love.mouse.getX() / params.cell_size) + 1
     cursor_atYcell = math.floor(love.mouse.getY() / params.cell_size) + 1
-    if love.mouse.isDown(1) and cursor_atXcell <= params.grid_x and cursor_atYcell <= params.grid_y then
-      grid[cursor_atYcell][cursor_atXcell] = true
-    end
+    --if love.mouse.isDown(1) and cursor_atXcell <= params.grid_x and cursor_atYcell <= params.grid_y then
+      --grid[cursor_atYcell][cursor_atXcell] = true
+    --end
+    Grid.select(grid, cursor_atXcell, cursor_atYcell)
   end
 end
-
-function clearGrid()
-  for j = 0, params.grid_y do
-  grid[j] = {}
-    for i = 0, params.grid_x do
-      grid[j][i] = false
-    end
-  end
- end
 
 function love.keypressed(key)
   if key == "escape" then

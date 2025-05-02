@@ -31,6 +31,13 @@ function Grid.draw_grid(grid, cursor_xcell, cursor_ycell)
   end
 end
 
+function Grid.select(grid, mx_cell, my_cell)
+  if love.mouse.isDown(1) and mx_cell <= params.grid_x
+                          and my_cell <= params.grid_y then
+      grid[my_cell][mx_cell] = true
+  end
+end
+
 local function count_neighbors(grid, y, x)
   local neighbors = 0
   for dy = -1, 1 do
@@ -64,6 +71,15 @@ function Grid.next_grid(grid)
   return nextGrid
 end
 
+function Grid.clear(grid)
+  for j = 0, params.grid_y do
+  grid[j] = {}
+    for i = 0, params.grid_x do
+      grid[j][i] = false
+    end
+  end
+  return grid
+end
 
 
 return Grid

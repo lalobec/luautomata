@@ -1,4 +1,4 @@
-local Button = require("generic_button")
+local Button = require("button")
 
 local Menu = {
   buttons = {}
@@ -6,8 +6,8 @@ local Menu = {
 
 function Menu:load()
   love.graphics.setBackgroundColor(1, 1, 1)
-  table.insert(self.buttons, Button.new(0, 0, 200, 20, "Start Game of Life"))
-  table.insert(self.buttons, Button.new(0, 30, 200, 20, "Exit", function() love.event.quit() end))
+  table.insert(self.buttons, Button.new(0, 250, 200, 20, "Start Game of Life"))
+  table.insert(self.buttons, Button.new(0, 300, 200, 20, "Exit", function() love.event.quit() end))
 end
 
 function Menu:draw()

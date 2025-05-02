@@ -1,7 +1,7 @@
 local params = {
   cell_size = 5,
-  win_width = 800,
-  win_height = 600,
+  win_width = 1200,
+  win_height = 800,
 }
 
 params.grid_y = params.win_height / params.cell_size - 5

@@ -1,56 +1,60 @@
--- this is for the button
+local Button = {}
 
---[[ First try for the button implementation...
-function button(text, x_pos, y_pos)
-  love.graphics.setColor(0.86, 0.86, 0.86)
-  love.graphics.rectangle("fill", x_pos, y_pos, 100, 30)
-  love.graphics.setColor(0, 0, 0)
-  love.graphics.print(text, x_pos + 8, y_pos + 8)
+function Button.new(x, y, width, height, text, onClick)
+  local self = {
+    x = x,
+    y = y,
+    width = width,
+    height = height,
+
+    text = text or "",
+    font = love.graphics.getFont(),
+    color = {0.4, 0.4, 0.8},     -- blue
+    hoverColor = {0.6, 0.6, 1}, -- light blue
+    textColor = {1, 1, 1},      -- white
+    textOffset = {x=0, y=0},     -- text position
+
+    onClick = onClick or function() end,
+    isHovered = false,
+    isPressed = false
+  }
+  return setmetatable(self, {__index = Button})
 end
---]]
 
-local button = {
-  x = 600,
-  y = 300,
-  width = 100,
-  height = 20,
-  text = "set the text",
-  color = {0.4, 0.4, 0.8}, --love.math.colorFromBytes(61, 101, 122),
-  hover_color = {0.6, 0.6, 1}, --love.math.colorFromBytes(51, 131, 112),
-  isHovered = false
-}
-
-function button:draw() -- equivalent to button.draw = function(self)
-  if self.isHovered then
-    love.graphics.setColor(self.hover_color)
-  else
-    love.graphics.setColor(self.color)
-  end
-
+function Button:draw()
+  -- Draw button
+  -- Remember 'and' returns the second operator if the first is truthy 
+  local color = self.isPressed and {0.3, 0.3, 0.7} or
+                self.isHovered and self.hoverColor or
+                self.color
+  love.graphics.setColor(color)
   love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
-  love.graphics.setColor(1, 1, 1)
-  local font = love.graphics.getFont()
-  local textWidth = font:getWidth(self.text)
-  local textHeight = font:getHeight()
+
+  -- Add text
+  love.graphics.setColor(self.textColor)
+  local textWidth = self.font:getWidth(self.text)
+  local textHeight = self.font:getHeight()
   love.graphics.print(
-      self.text,
-      self.x + (self.width - textWidth) / 2,
-      self.y + (self.height - textHeight) / 2
+    self.text,
+    self.x + (self.width - textWidth)/2 + self.textOffset.x,
+    self.y + (self.height - textHeight)/2 + self.textOffset.y
   )
-
 end
 
-function button:update()
-  local mouseX, mouseY = love.mouse.getPosition()
-  self.isHovered = mouseX >= self.x and mouseX <= self.x + self.width and mouseY >= self.y and mouseY <= self.y + self.height
-end
+function Button:update()
+  local mx, my = love.mouse.getPosition()
+  self.isHovered = mx >= self.x and mx <= self.x + self.width and
+                   my >= self.y and my <= self.y + self.height
 
-function button:pressed()
-  if self.isHovered then
-    print("button clicked")
-    return true
+  if self.isHovered and love.mouse.isDown(1) then
+    self.isPressed = true
+  else
+    if self.isHovered and self.isPressed then
+      self.onClick()
+    end
+    self.isPressed = false
   end
-  return false
+
 end
 
-return button
+return Button
